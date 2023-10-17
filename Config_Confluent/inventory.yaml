@@ -1,0 +1,35 @@
+kafka_controller:
+  hosts:
+	10.241.238.233:
+    10.241.238.234:
+
+kafka_broker:
+  hosts:
+    10.241.238.233:
+	10.241.238.234:
+
+schema_registry:
+  hosts:
+    10.241.238.233:
+
+kafka_rest:
+  hosts:
+    10.241.238.233:
+
+ksql:
+  hosts:
+    10.241.238.233:
+    10.241.238.234:
+
+kafka_connect:
+  hosts:
+    10.241.238.233:
+
+control_center:
+  hosts:
+    10.241.238.234:
+	
+all:
+  vars:
+    ansible_user: adminkafka
+    ansible_ssh_private_key_file: ~/.ssh/id_rsa
