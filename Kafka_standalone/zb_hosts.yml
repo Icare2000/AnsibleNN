@@ -4,8 +4,8 @@ zookeepers:
     kafka-1.internal:
        ansible_host: 10.241.238.233
        myid: 1
-     kafka-2.internal:
-       ansible_host: 10.241.238.234:
+    kafka-2.internal:
+       ansible_host: 10.241.238.234
        myid: 2
 
 brokers:
