@@ -1,21 +1,17 @@
 ---
 zookeepers:
   hosts:
-    host1:
       10.241.238.233:
-      myid=1
-    host2:
+        myid: 1
       10.241.238.234:
-      myid=2
+        myid: 2
 
 brokers:
   hosts:
-    host1:
-      10.241.238.233:
-      brokerid=1
-    host2:
-      10.241.238.234:
-      brokerid=2
+    10.241.238.233:
+      brokerid: 1
+    10.241.238.234:
+      brokerid: 2
 
 connect:
   hosts:
