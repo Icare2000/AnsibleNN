@@ -52,8 +52,8 @@
     
     - name: download kafka source
       get_url:
-      url: "https://downloads.apache.org/kafka/{{kafka_vers}}/kafka_{{scala_vers}}-{{kafka_vers}}.tgz"
-      dest: /tmp/kafka_{{scala_vers}}-{{kafka_vers}}.tgz
+        url: "https://downloads.apache.org/kafka/{{kafka_vers}}/kafka_{{scala_vers}}-{{kafka_vers}}.tgz"
+        dest: /tmp/kafka_{{scala_vers}}-{{kafka_vers}}.tgz
 
     - name: expand tarball to source folder
       unarchive:
