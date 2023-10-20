@@ -9,6 +9,14 @@
         state: present      
         update_cache: yes
 
+- name: Check Kraft
+  - hosts: kraft_servers
+    tasks:
+    - debug:
+      msg: "This is to gather facts from spark"
+      var: ansible_facts
+
+
 #Installing Apache Kafka (Zookeeper&Brokers)
 - name: Install and Configure Zookeeper & Brokers
   hosts: kraft_servers, brokers
