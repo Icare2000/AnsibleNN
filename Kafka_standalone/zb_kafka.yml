@@ -12,7 +12,7 @@
 - name: Check Kraft
   hosts: kraft_servers
   tasks:
-  - debug:
+  debug:
     msg: "This is to gather facts from spark"
     var: ansible_facts
 
