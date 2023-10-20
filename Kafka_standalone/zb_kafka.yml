@@ -10,7 +10,7 @@
         update_cache: yes
 
 - name: Check Kraft
-  - hosts: kraft_servers
+  hosts: kraft_servers
     tasks:
     - debug:
       msg: "This is to gather facts from spark"
