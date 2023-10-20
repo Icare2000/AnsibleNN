@@ -63,8 +63,8 @@
       notify: enforce kafka permissions
   handlers:
     - name: reload systemd
-    systemd:
-      daemon_reload: yes
+      systemd:
+        daemon_reload: yes
 
     - name: enforce kafka permissions
       file:
