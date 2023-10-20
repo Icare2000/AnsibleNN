@@ -1,3 +1,9 @@
+- name: Dummy task
+  hosts:  kraft_servers
+  tasks:
+    - # doesn't matter what you do, just that they were talked to previously.
+
+
 #Installing Apache Kafka (Zookeeper&Brokers)
 - name: Install and Configure Zookeeper & Brokers
   hosts: kraft_servers, brokers
