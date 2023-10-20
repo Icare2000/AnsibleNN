@@ -16,6 +16,7 @@
   vars:
     jdk_version: openjdk-8-jre
     installation_dir: /etc/kafka
+    kafka_path: /etc/kafka2
     zookeeper_data_dir: /var/lib/zookeeper/data 
     zookeeper_port: 2181
     kafka_heap_size: -Xmx520M -Xms520M
@@ -48,6 +49,21 @@
         mode: 0755
         owner: kafka
         group: kafka
+    
+    - name: download kafka source
+      get_url:
+      url: "https://downloads.apache.org/kafka/{{kafka_vers}}/kafka_{{scala_vers}}-{{kafka_vers}}.tgz"
+      dest: /tmp/kafka_{{scala_vers}}-{{kafka_vers}}.tgz
+
+    - name: expand tarball to source folder
+      unarchive:
+        src: "/tmp/kafka_{{scala_vers}}-{{kafka_vers}}.tgz"
+        dest: "{{ kafka_path }}"
+        remote_src: yes
+        owner: root
+        group: root
+        mode: 0640
+      notify: enforce kafka permissions
     
     - name: Download & Unzip Kafka from site
       unarchive:
