@@ -11,8 +11,7 @@
 
 - name: Check Kraft
   hosts: kraft_servers
-  tasks:
-  debug:
+  ansible.builtin.debug:
     msg: "This is to gather facts from spark"
     var: ansible_facts
 
