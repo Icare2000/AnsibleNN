@@ -31,9 +31,9 @@
         update_cache: yes
 
     - name: create kafka user
-    user:
-      name: kafka
-      shell: /bin/false
+      user:
+        name: kafka
+        shell: /bin/false
 
   - name: build kafka directory structures
     file:
