@@ -9,11 +9,12 @@
         state: present      
         update_cache: yes
 
-# - name: Check Kraft
-#   hosts: kraft_servers
-#   ansible.builtin.debug:
-#     msg: "This is to gather facts from spark"
-#     var: ansible_facts
+- name: Check Kraft
+  hosts: kraft_servers
+  become: yes
+  ansible.builtin.debug:
+    msg: "This is to gather facts from spark"
+    var: ansible_facts
 
 
 #Installing Apache Kafka (Zookeeper&Brokers)
