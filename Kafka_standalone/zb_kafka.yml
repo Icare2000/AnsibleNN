@@ -61,6 +61,12 @@
         group: root
         mode: 0640
       notify: enforce kafka permissions
+    - name: symlink kafka dirs to latest
+      file:
+        state: link
+        src: "{{ kafka_path }}/kafka_{{scala_vers}}-{{kafka_vers}}"
+        dest: "{{ kafka_path }}/latest"
+        
   handlers:
     - name: reload systemd
       systemd:
