@@ -66,7 +66,13 @@
         state: link
         src: "{{ kafka_path }}/kafka_{{scala_vers}}-{{kafka_vers}}"
         dest: "{{ kafka_path }}/latest"
-        
+    - name: set execute bit on files in bin dir
+      file:
+        path: "{{ kafka_path }}/kafka_{{scala_vers}}-{{kafka_vers}}/bin/"
+        state: directory
+        mode: 0750
+        recurse: yes
+
   handlers:
     - name: reload systemd
       systemd:
