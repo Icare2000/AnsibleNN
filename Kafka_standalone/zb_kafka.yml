@@ -11,10 +11,10 @@
 
 - name: Check Kraft
   hosts: kraft_servers
-    tasks:
-    - debug:
-      msg: "This is to gather facts from spark"
-      var: ansible_facts
+  tasks:
+  - debug:
+    msg: "This is to gather facts from spark"
+    var: ansible_facts
 
 
 #Installing Apache Kafka (Zookeeper&Brokers)
