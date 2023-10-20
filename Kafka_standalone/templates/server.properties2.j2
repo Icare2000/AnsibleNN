@@ -1,4 +1,4 @@
 controller.quorum.voters=
 {% for node in groups['kraft_servers'] %}
-   {{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}
+   {{ hostvars[node]['ansible_eth0']['ipv4']['address'] }}
 {%- endfor %}
