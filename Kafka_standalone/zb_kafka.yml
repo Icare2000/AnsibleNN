@@ -15,7 +15,7 @@
   become: yes
   vars:
     jdk_version: openjdk-8-jre
-    installation_dir: /etc/kafka
+    kafka_path: /etc/kafka
     zookeeper_data_dir: /var/lib/zookeeper/data 
     zookeeper_port: 2181
     kafka_heap_size: -Xmx520M -Xms520M
@@ -30,24 +30,22 @@
         state: present      
         update_cache: yes
 
-    - name: Create a group called "kafka"
-      group:
-        name: kafka
-        state: present
+    - name: create kafka user
+    user:
+      name: kafka
+      shell: /bin/false
 
-    - name: Create a user called "kafka"
-      user:
-        name: kafka
-        state: present
-        group: kafka
-
-    - name: Create an installation directory
-      file:
-        path: "{{installation_dir}}"
-        state: directory
-        mode: 0755
-        owner: kafka
-        group: kafka
+  - name: build kafka directory structures
+    file:
+      path: "{{ item }}"
+      state: directory
+      owner: kafka
+      group: kafka
+      mode: 0750
+      recurse: yes
+    loop:
+      - "{{ kafka_path }}/kafka_{{scala_vers}}-{{kafka_vers}}/logs/kraft-combined-logs"
+      - "{{ kafka_log_dir }}"
     
     - name: download kafka source
       get_url:
@@ -57,7 +55,7 @@
     - name: expand tarball to source folder
       unarchive:
         src: "/tmp/kafka_{{scala_version}}-{{kafka_version}}.tgz"
-        dest: "{{ installation_dir }}"
+        dest: "{{ kafka_path }}"
         remote_src: yes
         owner: root
         group: root
@@ -68,7 +66,7 @@
   #   - name: Configure ZooKeeper Properties
   #     template:
   #       src: zb_zookeeper_properties.j2
-  #       dest: "{{installation_dir}}/config/zookeeper.properties"
+  #       dest: "{{kafka_path}}/config/zookeeper.properties"
   #     when: inventory_hostname in groups['zookeepers']
   
   #   - name: Create ZooKeeper data directory
@@ -89,7 +87,7 @@
     
   #   - name: Update the Java Heap Size for Zookeepers
   #     replace:
-  #         path: "{{installation_dir}}/bin/zookeeper-server-start.sh"
+  #         path: "{{kafka_path}}/bin/zookeeper-server-start.sh"
   #         regexp: 'export KAFKA_HEAP_OPTS=(".+")'
   #         replace: 'export KAFKA_HEAP_OPTS="{{zookeeper_heap_size}}"'
   #         backup: yes
@@ -99,12 +97,12 @@
   #   - name: Configure Server Properties
   #     template:
   #       src: zb_server_properties.j2
-  #       dest: "{{installation_dir}}/config/server.properties"
+  #       dest: "{{kafka_path}}/config/server.properties"
   #     when: inventory_hostname in groups['brokers']
 
   #   - name: Update the Java Heap Size for Kafka
   #     replace:
-  #         path: "{{installation_dir}}/bin/kafka-server-start.sh"
+  #         path: "{{kafka_path}}/bin/kafka-server-start.sh"
   #         regexp: 'export KAFKA_HEAP_OPTS=(".+")'
   #         replace: 'export KAFKA_HEAP_OPTS="{{kafka_heap_size}}"'
   #         backup: yes
@@ -121,8 +119,8 @@
   #         [Service]
   #         Type=simple
   #         User=kafka
-  #         ExecStart=/bin/sh -c '{{installation_dir}}/bin/zookeeper-server-start.sh {{installation_dir}}/config/zookeeper.properties > {{zookeeper_data_dir}}/zookeeperservice.log 2>&1'
-  #         ExecStop={{installation_dir}}/bin/zookeeper-server-stop.sh
+  #         ExecStart=/bin/sh -c '{{kafka_path}}/bin/zookeeper-server-start.sh {{kafka_path}}/config/zookeeper.properties > {{zookeeper_data_dir}}/zookeeperservice.log 2>&1'
+  #         ExecStop={{kafka_path}}/bin/zookeeper-server-stop.sh
   #         Restart=always  
   #         [Install]
   #         WantedBy=multi-user.target
@@ -140,8 +138,8 @@
   #         [Service]
   #         Type=simple
   #         User=kafka
-  #         ExecStart=/bin/sh -c '{{installation_dir}}/bin/kafka-server-start.sh {{installation_dir}}/config/server.properties > {{installation_dir}}/kafkaservice.log 2>&1'
-  #         ExecStop={{installation_dir}}/bin/kafka-server-stop.sh
+  #         ExecStart=/bin/sh -c '{{kafka_path}}/bin/kafka-server-start.sh {{kafka_path}}/config/server.properties > {{kafka_path}}/kafkaservice.log 2>&1'
+  #         ExecStop={{kafka_path}}/bin/kafka-server-stop.sh
   #         Restart=always
   #         [Install]
   #         WantedBy=multi-user.target
