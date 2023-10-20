@@ -78,6 +78,9 @@
     #     mode: 0644
     #   notify: reload systemd
 
+    - debug:
+      var: groups['kraft_servers'
+
     - name: render kakfa service config file
       template:
         src: ../templates/server.properties2.j2
