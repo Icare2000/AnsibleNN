@@ -1,4 +1,7 @@
-controller.quorum.voters=
-{% for node in groups['kraft_servers'] %}
-   {{ hostvars[node]ansible_default_ipv4.address }}
+controller.quorum.voters={% for node in groups['kraft_servers'] %}
+{% if loop.index == loop.length %}
+{{ node.split('.')[3] }}@{{ node }}:9093
+{% else %}
+{{ node.split('.')[3] }}@{{ node }}:9093,
+{%- endif %}
 {%- endfor %}
