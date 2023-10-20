@@ -1,6 +1,6 @@
 #Install basic from NN
 - name: Install basics from Nespresso
-  hosts: zookeepers
+  hosts: kraft_servers
   become: yes
   tasks:
     - name: Install MC
@@ -11,7 +11,7 @@
 
 #Installing Apache Kafka (Zookeeper&Brokers)
 - name: Install and Configure Zookeeper & Brokers
-  hosts: zookeepers, brokers
+  hosts: kraft_servers, brokers
   become: yes
   vars:
     jdk_version: openjdk-8-jre
