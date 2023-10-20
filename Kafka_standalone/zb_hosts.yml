@@ -1,5 +1,5 @@
 ---
-zookeepers:
+kraft_servers:
   hosts:
     kafka-1.internal:
        ansible_host: 10.241.238.233
