@@ -1,0 +1,133 @@
+#Installing Apache Kafka (Zookeeper&Brokers)
+- name: Install and Configure Zookeeper & Brokers
+  hosts: kraft_servers, brokers
+  become: yes
+  vars:
+    jdk_version: openjdk-8-jre
+    kafka_path: /etc/kafka
+    zookeeper_data_dir: /var/lib/zookeeper/data 
+    zookeeper_port: 2181
+    kafka_heap_size: -Xmx520M -Xms520M
+    zookeeper_heap_size: -Xmx528M -Xms528M
+    kafka_vers: 3.6.0
+    scala_vers: 2.13
+    kafka_url: https://downloads.apache.org/kafka/{{kafka_vers}}/kafka_{{scala_vers}}-{{kafka_vers}}.tgz
+  tasks:
+    # - name: Install JDK (OpenJDK)
+    #   apt:
+    #     name: "{{jdk_version}}"
+    #     state: present      
+    #     update_cache: yes
+
+    # - name: create kafka user
+    #   user:
+    #     name: kafka
+    #     shell: /bin/false
+
+    # - name: build kafka directory structures
+    #   file:
+    #     path: "{{ item }}"
+    #     state: directory
+    #     owner: kafka
+    #     group: kafka
+    #     mode: 0750
+    #     recurse: yes
+    #   loop:
+    #     - "{{ kafka_path }}/kafka_{{scala_vers}}-{{kafka_vers}}/logs/kraft-combined-logs"
+    #    # - "{{ kafka_log_dir }}"
+        
+    # - name: download kafka source
+    #   get_url:
+    #     url: "https://downloads.apache.org/kafka/{{kafka_vers}}/kafka_{{scala_vers}}-{{kafka_vers}}.tgz"
+    #     dest: /tmp/kafka_{{scala_vers}}-{{kafka_vers}}.tgz
+
+    # - name: expand tarball to source folder
+    #   unarchive:
+    #     src: "/tmp/kafka_{{scala_vers}}-{{kafka_vers}}.tgz"
+    #     dest: "{{ kafka_path }}"
+    #     remote_src: yes
+    #     owner: root
+    #     group: root
+    #     mode: 0640
+    #   notify: enforce kafka permissions
+    # - name: symlink kafka dirs to latest
+    #   file:
+    #     state: link
+    #     src: "{{ kafka_path }}/kafka_{{scala_vers}}-{{kafka_vers}}"
+    #     dest: "{{ kafka_path }}/latest"
+    
+    # - name: set execute bit on files in bin dir
+    #   file:
+    #     path: "{{ kafka_path }}/kafka_{{scala_vers}}-{{kafka_vers}}/bin/"
+    #     state: directory
+    #     mode: 0750
+    #     recurse: yes
+
+    # - name: install kafka service systemd unit file
+    #   template:
+    #     src: ../templates/confluent-server.service.j2
+    #     dest: /etc/systemd/system/confluent-server.service
+    #     owner: root
+    #     group: root
+    #     mode: 0644
+    #   notify: reload systemd
+
+    - name: render kakfa service config file
+      template:
+        src: ../templates/server.properties2.j2
+        dest: "/tmp/server.properties"
+        owner: kafka
+        group: kafka
+        mode: 0640
+        backup: yes
+      #notify: restart kafka service
+
+    # - name: add kafka bin path to all users' PATH
+    #   template:
+    #     src: ../templates/kafka_path.sh.j2
+    #     dest: /etc/profile.d/kafka_path.sh
+    #     owner: root
+    #     group: root
+    #     mode: 0644
+    #     seuser: system_u
+    #     serole: object_r
+    #     setype: bin_t
+    #     selevel: s0
+
+    # - name: check if kraft logs dir has been initialized
+    #   shell: "{{ kafka_path }}/latest/bin/kafka-storage.sh info -c {{ kafka_path }}/latest/config/kraft/server.properties"
+    #   register: storage_init
+    #   ignore_errors: yes
+
+    # - name: init kraft logs dir
+    #   shell: "{{ kafka_path }}/kafka_{{scala_vers}}-{{kafka_vers}}/bin/kafka-storage.sh format -t {{ kafka_cluster_id }} -c {{ kafka_path }}/kafka_{{scala_vers}}-{{kafka_vers}}/config/kraft/server.properties"
+    #   when: '"is not formatted" in storage_init.stdout'
+
+    # - name: start and enable kafka service service
+    #   systemd:
+    #     name: confluent-server
+    #     state: started
+    #     enabled: yes
+
+
+
+
+
+  handlers:
+    - name: reload systemd
+      systemd:
+        daemon_reload: yes
+
+    - name: enforce kafka permissions
+      file:
+        path: "{{ kafka_path }}"
+        state: directory
+        owner: kafka
+        group: kafka
+        mode: 0750
+        recurse: yes
+      
+    - name: restart kafka service
+      systemd:
+        name: confluent-server
+        state: restarted
