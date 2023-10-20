@@ -66,12 +66,63 @@
         state: link
         src: "{{ kafka_path }}/kafka_{{scala_vers}}-{{kafka_vers}}"
         dest: "{{ kafka_path }}/latest"
+    
     - name: set execute bit on files in bin dir
       file:
         path: "{{ kafka_path }}/kafka_{{scala_vers}}-{{kafka_vers}}/bin/"
         state: directory
         mode: 0750
         recurse: yes
+
+    # - name: install kafka service systemd unit file
+    #   template:
+    #     src: ../templates/confluent-server.service.j2
+    #     dest: /etc/systemd/system/confluent-server.service
+    #     owner: root
+    #     group: root
+    #     mode: 0644
+    #   notify: reload systemd
+
+    - name: render kakfa service config file
+      template:
+        src: ../templates/server.properties.j2
+        dest: "{{ kafka_path }}/latest/config/kraft/server.properties"
+        owner: kafka
+        group: kafka
+        mode: 0640
+        backup: yes
+      notify: restart kafka service
+
+    - name: add kafka bin path to all users' PATH
+      template:
+        src: ../templates/kafka_path.sh.j2
+        dest: /etc/profile.d/kafka_path.sh
+        owner: root
+        group: root
+        mode: 0644
+        seuser: system_u
+        serole: object_r
+        setype: bin_t
+        selevel: s0
+
+    - name: check if kraft logs dir has been initialized
+      shell: "{{ kafka_path }}/latest/bin/kafka-storage.sh info -c {{ kafka_path }}/latest/config/kraft/server.properties"
+      register: storage_init
+      ignore_errors: yes
+
+    - name: init kraft logs dir
+      shell: "{{ kafka_path }}/kafka_{{scala_vers}}-{{kafka_vers}}/bin/kafka-storage.sh format -t {{ kafka_cluster_id }} -c {{ kafka_path }}/kafka_{{scala_vers}}-{{kafka_vers}}/config/kraft/server.properties"
+      when: '"is not formatted" in storage_init.stdout'
+
+    # - name: start and enable kafka service service
+    #   systemd:
+    #     name: confluent-server
+    #     state: started
+    #     enabled: yes
+
+
+
+
 
   handlers:
     - name: reload systemd
