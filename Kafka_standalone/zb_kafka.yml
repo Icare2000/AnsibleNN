@@ -24,11 +24,11 @@
     scala_vers: 2.13
     kafka_url: https://downloads.apache.org/kafka/{{kafka_vers}}/kafka_{{scala_vers}}-{{kafka_vers}}.tgz
   tasks:
-    - name: Install JDK (OpenJDK)
-      apt:
-        name: "{{jdk_version}}"
-        state: present      
-        update_cache: yes
+    # - name: Install JDK (OpenJDK)
+    #   apt:
+    #     name: "{{jdk_version}}"
+    #     state: present      
+    #     update_cache: yes
 
     - name: create kafka user
       user:
@@ -45,7 +45,7 @@
         recurse: yes
       loop:
         - "{{ kafka_path }}/kafka_{{scala_vers}}-{{kafka_vers}}/logs/kraft-combined-logs"
-        - "{{ kafka_log_dir }}"
+       # - "{{ kafka_log_dir }}"
         
     - name: download kafka source
       get_url:
